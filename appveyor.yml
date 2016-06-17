@@ -2,14 +2,14 @@
 # http://www.appveyor.com/docs/installed-software#python
 
 environment:
-  global:
-    DATABASE_PASS: Password12!
   matrix:
     - PYTHON: "C:\\Python27"
       TOXENV: py27-dj19-postgres-noelasticsearch
+      DATABASE_PASS: Password12!
 
     - PYTHON: "C:\\Python27"
       TOXENV: py27-dj19-mysql-noelasticsearch
+      DATABASE_PASS: Password12!
 
 services:
   - mysql               # start MySQL 5.6 service
