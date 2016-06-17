@@ -849,6 +849,20 @@ class TestStructBlock(SimpleTestCase):
         result = block.render(value)
         self.assertEqual(result, """<h1>Hello</h1><div class="rich-text"><i>italic</i> world</div>""")
 
+    def test_lazy(self):
+        class FailBlock(blocks.CharBlock):
+            def to_python(_self, value):
+                self.fail("to_python() should not have been called yet!")
+
+        block = blocks.StructBlock([
+            ('title', blocks.CharBlock()),
+            ('deferred', FailBlock()),
+        ])
+
+        val = block.to_python({'title': 'Torchbox', 'deferred': 'I am lazy'})
+        self.assertEqual(val['title'], 'Torchbox')
+
+
 
 class TestListBlock(unittest.TestCase):
     def test_initialise_with_class(self):
