@@ -2,7 +2,8 @@
 # http://www.appveyor.com/docs/installed-software#python
 
 environment:
-  DATABASE_PASS: Password12!
+  global:
+    DATABASE_PASS: Password12!
   matrix:
     - PYTHON: "C:\\Python27"
       TOXENV: py27-dj19-postgres-noelasticsearch
