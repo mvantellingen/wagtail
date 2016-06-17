@@ -5,10 +5,12 @@ environment:
   matrix:
     - PYTHON: "C:\\Python27"
       TOXENV: py27-dj19-postgres-noelasticsearch
+      DATABASE_USER: postgres
       DATABASE_PASS: Password12!
 
     - PYTHON: "C:\\Python27"
       TOXENV: py27-dj19-mysql-noelasticsearch
+      DATABASE_USER: root
       DATABASE_PASS: Password12!
 
 services:
