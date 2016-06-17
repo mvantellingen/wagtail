@@ -19,7 +19,7 @@ from wagtail.wagtailadmin.edit_handlers import (
     FieldPanel, InlinePanel, MultiFieldPanel, ObjectList, PageChooserPanel, StreamFieldPanel,
     TabbedInterface)
 from wagtail.wagtailadmin.forms import WagtailAdminPageForm
-from wagtail.wagtailcore.blocks import CharBlock, RichTextBlock
+from wagtail.wagtailcore.blocks import CharBlock, ListBlock, RichTextBlock, StructBlock
 from wagtail.wagtailcore.fields import RichTextField, StreamField
 from wagtail.wagtailcore.models import Orderable, Page, PageManager
 from wagtail.wagtaildocs.edit_handlers import DocumentChooserPanel
@@ -511,11 +511,17 @@ class CustomImage(AbstractImage):
     )
 
 
+class SectionBlock(StructBlock):
+    title = CharBlock()
+    images = ListBlock(ImageChooserBlock())
+
+
 class StreamModel(models.Model):
     body = StreamField([
         ('text', CharBlock()),
         ('rich_text', RichTextBlock()),
         ('image', ImageChooserBlock()),
+        ('section', SectionBlock()),
     ])
 
 
@@ -524,6 +530,7 @@ class StreamPage(Page):
         ('text', CharBlock()),
         ('rich_text', RichTextBlock()),
         ('image', ImageChooserBlock()),
+        ('section', SectionBlock()),
     ])
 
     api_fields = ('body',)

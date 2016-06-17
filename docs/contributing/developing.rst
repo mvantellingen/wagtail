@@ -94,6 +94,13 @@ If your Elasticsearch instance is located somewhere else, you can set the
 
     ELASTICSEARCH_URL=http://my-elasticsearch-instance:9200 python runtests.py --elasticsearch
 
+
+***Migrations***
+If you change the models in the wagtail testapp, you'll need to make migrations
+
+    django-admin.py makemigrations --setting=wagtail.tests.settings
+
+
 Compiling static assets
 ~~~~~~~~~~~~~~~~~~~~~~~
 

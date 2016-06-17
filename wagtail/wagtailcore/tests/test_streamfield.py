@@ -115,6 +115,53 @@ class TestLazyStreamField(TestCase):
             assert instance.body[1].value.title == 'Test image 2'
             assert instance.body[2].value.title == 'Test image 3'
 
+    def test_lazy_load_queryset_bulk_tree(self):
+        """Sensure grouped lazy loading in a tree StreamField structure.
+        """
+        image_file = get_test_image_file()
+        image_1 = Image.objects.create(title='Test image 1', file=image_file)
+        image_2 = Image.objects.create(title='Test image 2', file=image_file)
+        image_3 = Image.objects.create(title='Test image 3', file=image_file)
+        image_4 = Image.objects.create(title='Test image 4', file=image_file)
+        image_5 = Image.objects.create(title='Test image 5', file=image_file)
+
+        body = json.dumps([
+            {
+                "type": "image",
+                "value": image_5.pk,
+            },
+            {
+                "type": "section",
+                "value": {
+                    "title": {"type": "text", "value": "The Shop"},
+                    "images": [image_1.pk, image_2.pk]
+                },
+            },
+            {
+                "type": "section",
+                "value": {
+                    "title": {"type": "text", "value": "Le Botique"},
+                    "images": [image_3.pk, image_4.pk]
+                }
+            }
+        ])
+
+        with_images = StreamModel.objects.create(body=body,)
+
+        with self.assertNumQueries(1):
+            instance = StreamModel.objects.get(pk=with_images.pk)
+
+        # Prefetch all image blocks
+        with self.assertNumQueries(1):
+            instance.body[0]
+
+        # Further image block access should not execute any db lookups
+        with self.assertNumQueries(0):
+            instance.body[1].value['images'][0]
+            instance.body[1].value['images'][1]
+            instance.body[2].value['images'][0]
+            instance.body[2].value['images'][0]
+
 
 class TestSystemCheck(TestCase):
     def tearDown(self):
