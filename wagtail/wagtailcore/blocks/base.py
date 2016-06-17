@@ -197,6 +197,9 @@ class Block(six.with_metaclass(BaseBlock, object)):
         """
         return value
 
+    def bulk_to_python(self, value):
+        raise NotImplemented()
+
     def get_prep_value(self, value):
         """
         The reverse of to_python; convert the python value into JSON-serialisable form.

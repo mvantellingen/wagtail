@@ -1,4 +1,5 @@
 from __future__ import absolute_import, unicode_literals
+from itertools import chain
 
 from django import forms
 from django.contrib.staticfiles.templatetags.staticfiles import static
@@ -132,6 +133,26 @@ class ListBlock(Block):
             self.child_block.to_python(item)
             for item in value
         ]
+
+    def bulk_to_python(self, value):
+        """ Bulk load its children.
+        """
+        # `value` is a list of values representing a ListBLock of self.child_block
+        # This CANNOT bulk load different types of ListBlock in one go.
+        # list of values repr ListBlockValue, [[foo, foo, foo], [foo, foo, foo]]
+        lengths = map(len, value)
+        flattened = chain(*value)
+        converted_values = self.child_block.bulk_to_python(flattened)
+
+        assert len(flattened) == len(converted_values)
+
+        converted = []
+        for n in lengths:
+            converted.append(converted_values[:n])
+            del converted_values[:n]
+
+        assert not converted_values
+        return converted
 
     def get_prep_value(self, value):
         # recursively call get_prep_value on children and return as a list
