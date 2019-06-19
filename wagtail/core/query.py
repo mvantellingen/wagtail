@@ -382,7 +382,7 @@ def specific_iterator(qs, defer=False):
         # look up model class for this content type, falling back on the original
         # model (i.e. Page) if the more specific one is missing
         model = content_types[content_type].model_class() or qs.model
-        pages = model.objects.filter(pk__in=pks)
+        pages = model.objects.filter(pk__in=pks).annotate(**qs.query.annotations)
 
         if defer:
             # Defer all specific fields
